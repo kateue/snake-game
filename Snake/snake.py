@@ -9,6 +9,7 @@ class SNAKE:
         self.direction = Vector2(0,0)
         self.new_block = False
 
+        # images of the snake body
         self.head_up = pygame.image.load('Documents/Snake/Graphics/head_up.png').convert_alpha()
         self.head_down = pygame.image.load('Documents/Snake/Graphics/head_down.png').convert_alpha()
         self.head_right = pygame.image.load('Documents/Snake/Graphics/head_right.png').convert_alpha()
@@ -33,6 +34,7 @@ class SNAKE:
          self.update_head_graphics()
          self.update_tail_graphics()
 
+         # direction of snake body 
          for index,block in enumerate(self.body):
             x_pos = int(block.x * cell_size)
             y_pos = int(block.y * cell_size)
@@ -72,7 +74,8 @@ class SNAKE:
         elif tail_relation == Vector2(-1, 0): self.tail = self.tail_right
         elif tail_relation == Vector2(0, 1): self.tail = self.tail_up
         elif tail_relation == Vector2(0, -1): self.tail = self.tail_down
-    
+
+    # adds length to the snake body 
     def move_snake(self):
         if self.new_block == True:
             body_copy = self.body[:]
@@ -86,7 +89,8 @@ class SNAKE:
     
     def add_block(self):
         self.new_block = True
-    
+
+    # sound when apple is eaten
     def play_crunch_sound(self):
         self.crunch_sound.play()
     
@@ -103,6 +107,7 @@ class FRUIT:
         screen.blit(apple, fruit_rect)
         #pygame.draw.rect(screen, (126, 166, 114), fruit_rect)
 
+    # randomizes the placement of the apple position after each game
     def randomize(self):
         self.x = random.randint(0, cell_number - 1)
         self.y = random.randint(0, cell_number - 1)
@@ -125,7 +130,9 @@ class MAIN:
         self.draw_score()
 
     def check_collision(self):
-        # reposition fruit
+        
+        # adds sound effect when apple is eaten
+        # sets new apple placement on screen after the snake eats the apple
         if self.fruit.pos == self.snake.body[0]:
             self.fruit.randomize()
             self.snake.add_block()
@@ -134,7 +141,8 @@ class MAIN:
         for block in self.snake.body[1:]:
             if block == self.fruit.pos:
                 self.fruit.randomize()
-        
+
+    # game ends when the snake hits its own body or hits the screen edges
     def check_fail(self):
         if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
                         self.game_over()
@@ -145,7 +153,8 @@ class MAIN:
 
     def game_over(self):
             self.snake.reset()
-    
+
+    # creates grass background design
     def draw_grass(self):
         grass_color = (167, 209, 61)
         for row in range(cell_number):
@@ -160,6 +169,7 @@ class MAIN:
                         grass_rect = pygame.Rect(col * cell_size, row * cell_size, cell_size, cell_size)
                         pygame.draw.rect(screen, grass_color, grass_rect)
 
+    # creates a scoreboard of eaten apples at the bottom right corner of screen
     def draw_score(self):
         score_text = str(len(self.snake.body) - 3)
         score_surface = game_font.render(score_text, True, (56, 74, 12))
@@ -189,6 +199,7 @@ main_game = MAIN()
 SCREEN_UPDATE = pygame.USEREVENT
 pygame.time.set_timer(SCREEN_UPDATE, 150)
 
+# keyboard controls
 while(True):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
